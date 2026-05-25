@@ -1,19 +1,39 @@
 import sys
 import os
 import time
+import threading
 from snapshot import GhostSnapshot
 from clone_factory import GhostCloneFactory
 from redirection import GhostRedirector
 from evolution_engine import EvolutionEngine
 from honey_logger import HoneyLogger
 
+# Add parent directory for database_manager
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from database_manager import MongoAtlasManager
+except ImportError:
+    MongoAtlasManager = None
+
 class GhostOrchestrator:
     def __init__(self):
         self.workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.redirector = GhostRedirector()
+        self.db = MongoAtlasManager() if MongoAtlasManager else None
 
     def trap_attacker(self, attacker_ip, target_ip):
         print(f"=== 👻 MIRAGE GHOST : DÉPLOIEMENT DU PIÈGE ===")
+        
+        # Log to Cloud
+        if self.db and self.db.db is not None:
+            self.db.insert_event({
+                "component": "ghost",
+                "type": "trap_activation",
+                "severity": "high",
+                "target": {"ip": target_ip},
+                "attacker": {"ip": attacker_ip},
+                "message": f"DÉPLOIEMENT DU PIÈGE : L'attaquant {attacker_ip} est en cours de redirection vers un clone de {target_ip}."
+            })
         
         # 1. Snapshot instantané
         print("[1/5] Capture de l'identité de la cible...")
@@ -40,16 +60,50 @@ class GhostOrchestrator:
 
         # 5. Enregistrement
         print("[5/5] Lancement du film de l'attaque (Logger)...")
-        logger = HoneyLogger(clone_id, self.workspace_root)
+        logger = HoneyLogger(clone_id, self.workspace_root, cloud_db=self.db)
         log_thread = threading.Thread(target=logger.start_logging, daemon=True)
         log_thread.start()
 
         print(f"\n[🔥] PIÈGE ACTIF : L'attaquant {attacker_ip} est maintenant dans le labyrinthe.")
         print("Toute son activité est enregistrée.")
 
+    def start_daemon(self):
+        """Lance Ghost en mode écoute (Démon) pour recevoir des ordres du Cloud"""
+        print(f"[*] 🛡️ MIRAGE GHOST : Démon d'automatisation lancé.")
+        self.running = True
+        while self.running:
+            try:
+                if self.db:
+                    commands = self.db.get_pending_commands("ghost")
+                    for cmd in commands:
+                        action = cmd.get("action")
+                        attacker_ip = cmd.get("target_ip")
+                        cmd_id = cmd.get("_id")
+                        
+                        # Note: Oracle envoie 'target_ip' qui est l'IP de l'attaquant à piéger
+                        if action == "trap_attacker" and attacker_ip:
+                            # Déterminer une cible locale par défaut pour le clone
+                            # (En production, Oracle pourrait spécifier quelle machine cloner)
+                            target_to_clone = "127.0.0.1" 
+                            
+                            print(f"[!] ORDRE REÇU : Piéger {attacker_ip}")
+                            self.trap_attacker(attacker_ip, target_to_clone)
+                            self.db.update_command_status(cmd_id, "executed", result=f"Attaquant {attacker_ip} redirigé.")
+                            
+                time.sleep(5)
+            except KeyboardInterrupt:
+                self.running = False
+            except Exception as e:
+                print(f"[!] Erreur Ghost Daemon : {e}")
+                time.sleep(10)
+
 if __name__ == "__main__":
-    if len(sys.argv) > 2:
-        orch = GhostOrchestrator()
+    orch = GhostOrchestrator()
+    if "--daemon" in sys.argv:
+        orch.start_daemon()
+    elif len(sys.argv) > 2:
         orch.trap_attacker(sys.argv[1], sys.argv[2])
     else:
-        print("Usage: sudo python3 ghost_orchestrator.py <attacker_ip> <target_ip>")
+        print("Usage:")
+        print("  sudo python3 ghost_orchestrator.py --daemon")
+        print("  sudo python3 ghost_orchestrator.py <attacker_ip> <target_ip>")
