@@ -66,15 +66,17 @@ class GhostOrchestrator:
 
         print(f"\n[🔥] PIÈGE ACTIF : L'attaquant {attacker_ip} est maintenant dans le labyrinthe.")
         print("Toute son activité est enregistrée.")
+def start_daemon(self):
+    """Lance Ghost en mode écoute (Démon) pour recevoir des ordres du Cloud"""
+    print(f"[*] 🛡️ MIRAGE GHOST : Démon d'automatisation lancé.")
+    self.running = True
+    while self.running:
+        try:
+            if self.db:
+                self.db.send_heartbeat("ghost")
+                commands = self.db.get_pending_commands("ghost")
+# ...
 
-    def start_daemon(self):
-        """Lance Ghost en mode écoute (Démon) pour recevoir des ordres du Cloud"""
-        print(f"[*] 🛡️ MIRAGE GHOST : Démon d'automatisation lancé.")
-        self.running = True
-        while self.running:
-            try:
-                if self.db:
-                    commands = self.db.get_pending_commands("ghost")
                     for cmd in commands:
                         action = cmd.get("action")
                         attacker_ip = cmd.get("target_ip")
