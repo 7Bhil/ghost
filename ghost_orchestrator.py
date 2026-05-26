@@ -66,31 +66,30 @@ class GhostOrchestrator:
 
         print(f"\n[🔥] PIÈGE ACTIF : L'attaquant {attacker_ip} est maintenant dans le labyrinthe.")
         print("Toute son activité est enregistrée.")
-def start_daemon(self):
-    """Lance Ghost en mode écoute (Démon) pour recevoir des ordres du Cloud"""
-    print(f"[*] 🛡️ MIRAGE GHOST : Démon d'automatisation lancé.")
-    self.running = True
-    while self.running:
-        try:
-            if self.db:
-                self.db.send_heartbeat("ghost")
-                commands = self.db.get_pending_commands("ghost")
-# ...
-
+    def start_daemon(self):
+        """Lance Ghost en mode écoute (Démon) pour recevoir des ordres du Cloud"""
+        print(f"[*] 🛡️ MIRAGE GHOST : Démon d'automatisation lancé.")
+        self.running = True
+        while self.running:
+            try:
+                if self.db:
+                    self.db.send_heartbeat("ghost")
+                    commands = self.db.get_pending_commands("ghost")
                     for cmd in commands:
                         action = cmd.get("action")
                         attacker_ip = cmd.get("target_ip")
+                        # Permettre au Cloud de spécifier quelle machine cloner
+                        target_to_clone = cmd.get("clone_source") or "127.0.0.1"
                         cmd_id = cmd.get("_id")
                         
-                        # Note: Oracle envoie 'target_ip' qui est l'IP de l'attaquant à piéger
                         if action == "trap_attacker" and attacker_ip:
-                            # Déterminer une cible locale par défaut pour le clone
-                            # (En production, Oracle pourrait spécifier quelle machine cloner)
-                            target_to_clone = "127.0.0.1" 
-                            
-                            print(f"[!] ORDRE REÇU : Piéger {attacker_ip}")
-                            self.trap_attacker(attacker_ip, target_to_clone)
-                            self.db.update_command_status(cmd_id, "executed", result=f"Attaquant {attacker_ip} redirigé.")
+                            print(f"[!] ORDRE REÇU : Piéger {attacker_ip} (Source: {target_to_clone})")
+                            try:
+                                self.trap_attacker(attacker_ip, target_to_clone)
+                                self.db.update_command_status(cmd_id, "executed", result=f"Attaquant {attacker_ip} redirigé.")
+                            except Exception as e:
+                                print(f"[!] Échec du piège : {e}")
+                                self.db.update_command_status(cmd_id, "failed", result=str(e))
                             
                 time.sleep(5)
             except KeyboardInterrupt:
