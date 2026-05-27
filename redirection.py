@@ -28,7 +28,7 @@ class GhostRedirector:
             print("[!] IP invalide détectée. Annulation du piège.")
             return False
 
-        print(f"[👻 GHOST] Activation du piège pour l'attaquant {attacker_ip}...")
+        print(f"[ GHOST] Activation du piège pour l'attaquant {attacker_ip}...")
         
         # 1. Permettre le routage local
         self._run_cmd(["sudo", "sysctl", "-w", "net.ipv4.conf.all.route_localnet=1"])
@@ -49,7 +49,7 @@ class GhostRedirector:
         ]
 
         if self._run_cmd(dnat_cmd) and self._run_cmd(snat_cmd):
-            print(f"[✅] Redirection active : {attacker_ip} est maintenant piégé dans le clone.")
+            print(f"[] Redirection active : {attacker_ip} est maintenant piégé dans le clone.")
             return True
         return False
 

@@ -52,7 +52,7 @@ class GhostSnapshot:
         path = os.path.join(folder, filename)
         with open(path, 'w') as f:
             json.dump(self.snapshot_data, f, indent=4)
-        print(f"[✅] Snapshot sauvegardé dans : {path}")
+        print(f"[] Snapshot sauvegardé dans : {path}")
         return path
 
 if __name__ == "__main__":

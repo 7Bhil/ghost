@@ -2,7 +2,7 @@
 # --- MIRAGE GHOST INSTALLER ---
 
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ Veuillez lancer avec sudo (nécessaire pour Docker/Iptables)"
+  echo " Veuillez lancer avec sudo (nécessaire pour Docker/Iptables)"
   exit 1
 fi
 

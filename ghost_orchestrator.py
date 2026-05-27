@@ -22,7 +22,7 @@ class GhostOrchestrator:
         self.db = MongoAtlasManager() if MongoAtlasManager else None
 
     def trap_attacker(self, attacker_ip, target_ip):
-        print(f"=== 👻 MIRAGE GHOST : DÉPLOIEMENT DU PIÈGE ===")
+        print(f"===  MIRAGE GHOST : DÉPLOIEMENT DU PIÈGE ===")
         
         # Log to Cloud
         if self.db and self.db.db is not None:
@@ -64,11 +64,11 @@ class GhostOrchestrator:
         log_thread = threading.Thread(target=logger.start_logging, daemon=True)
         log_thread.start()
 
-        print(f"\n[🔥] PIÈGE ACTIF : L'attaquant {attacker_ip} est maintenant dans le labyrinthe.")
+        print(f"\n[] PIÈGE ACTIF : L'attaquant {attacker_ip} est maintenant dans le labyrinthe.")
         print("Toute son activité est enregistrée.")
     def start_daemon(self):
         """Lance Ghost en mode écoute (Démon) pour recevoir des ordres du Cloud"""
-        print(f"[*] 🛡️ MIRAGE GHOST : Démon d'automatisation lancé.")
+        print(f"[*]  MIRAGE GHOST : Démon d'automatisation lancé.")
         self.running = True
         while self.running:
             try:

@@ -34,7 +34,7 @@ class GhostCloneFactory:
             json.dump(docker_compose, f, indent=4)
         
         subprocess.run(["docker", "compose", "-f", "docker-compose-ssh.yml", "up", "-d"], cwd=self.work_dir)
-        print("[✅] Cowrie SSH est actif.")
+        print("[] Cowrie SSH est actif.")
 
     def deploy_dionaea(self):
         """Déploie un honeypot multi-services Dionaea"""
@@ -54,7 +54,7 @@ class GhostCloneFactory:
             json.dump(docker_compose, f, indent=4)
         
         subprocess.run(["docker", "compose", "-f", "docker-compose-multi.yml", "up", "-d"], cwd=self.work_dir)
-        print("[✅] Dionaea est actif (FTP, SMB, MSSQL, MySQL).")
+        print("[] Dionaea est actif (FTP, SMB, MSSQL, MySQL).")
 
     def deploy_custom_web(self):
         """Génère un clone web Nginx basé sur le snapshot (déjà implémenté)"""

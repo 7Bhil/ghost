@@ -1,17 +1,17 @@
-# 👻 Mirage Ghost Engine
+#  Mirage Ghost Engine
 
 > **Le Piège Invisible.**  
 > Troisième pilier de l'écosystème **MIRAGE**, ce module est un moteur de déception capable de cloner des machines compromises pour y piéger les attaquants.
 
-## ✨ Fonctionnalités clés (100% Terminées)
+##  Fonctionnalités clés (100% Terminées)
 
-- ✅ **Snapshot (Jour 12)** : Capture l'identité d'une machine (Bannières, Headers).
-- ✅ **Clone Virtuel (Jour 13)** : Génération automatique de Honeypots Docker.
-- ✅ **Redirection (Jour 14)** : Basculement transparent via Iptables NAT.
-- ✅ **Évolution (Jour 15)** : Faux fichiers, bases de données SQLite et credentials dynamiques.
-- ✅ **Enregistrement (Jour 16)** : Logging temps réel de l'activité de l'attaquant.
+-  **Snapshot (Jour 12)** : Capture l'identité d'une machine (Bannières, Headers).
+-  **Clone Virtuel (Jour 13)** : Génération automatique de Honeypots Docker.
+-  **Redirection (Jour 14)** : Basculement transparent via Iptables NAT.
+-  **Évolution (Jour 15)** : Faux fichiers, bases de données SQLite et credentials dynamiques.
+-  **Enregistrement (Jour 16)** : Logging temps réel de l'activité de l'attaquant.
 
-## 🚀 Utilisation (Le Piège Complet)
+##  Utilisation (Le Piège Complet)
 
 Pour piéger un attaquant détecté :
 
